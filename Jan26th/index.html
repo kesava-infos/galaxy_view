@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        body {
+            overflow: hidden;
+            text-align: center;
+        }
+
+        #mainC {
+            width: 100%;
+            height: 100vh;
+            background-image: url("./flagBg.jpg");
+            background-size: contain;
+            position: fixed;
+            top: 0px;
+            left: 0px;
+        }
+
+        /* #c1{
+            position: absolute;
+            top: 0px;
+            left: 0px;
+        } */
+        .image {
+            position: absolute;
+            top: 34%;
+    left: 46%;
+    width: 165px;
+    height: 165px;
+            border-radius: 50px;
+            /* margin: -60px 0 0 -60px; */
+            -webkit-animation: spin 4s linear infinite;
+            -moz-animation: spin 4s linear infinite;
+            animation: spin 4s linear infinite;
+        }
+
+        @-moz-keyframes spin {
+            100% {
+                -moz-transform: rotate(360deg);
+            }
+        }
+
+        @-webkit-keyframes spin {
+            100% {
+                -webkit-transform: rotate(360deg);
+            }
+        }
+
+        @keyframes spin {
+            100% {
+                -webkit-transform: rotate(360deg);
+                transform: rotate(360deg);
+            }
+        }
+        .o{
+            color: orange;
+        }
+        .g{
+            color: green;
+        }
+        .pl20{
+            position: relative;
+            left: 20px;
+        }
+        .pl40{
+            position: relative;
+            left: 40px;
+        }
+        .pl60{
+            position: relative;
+            left: 60px;
+        }
+        .h1,.h2,.h3{
+            opacity: 0;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.1.0/fabric.all.min.js"></script>
+</head>
+
+<body>
+    <div style="height: 5px;"></div>
+    <canvas id="c1" width="1400" height="230"></canvas>
+    <img src="./chakra.png" height="190" class="image"/>
+    <div style="height: 185px;"></div>
+    <canvas id="c2" width="1400" height="230"></canvas>
+    <br/>
+    <h1 style="color: #ccc;"><span class="o">Happy</span> Republic <span class="g">Day</span> </h1>
+    <div id="mainC">
+        <!-- <img src="./green.png" width="30px" />
+        <img src="./orange.png" width="30px" />
+        <button onclick="start()">start</button><br /> -->
+            <h1 class="h1" style="color: #fff;"><span class="o">Happy</span> Republic <span class="g">Day</span> </h1>
+            <h1 class="h2" style="color: #fff;display: inline-block;width:1px;word-wrap: break-word; float: left;margin-left: 20px;"><span class="o pl20">Happy</span> <span class="pl40">Republic </span><span class="g pl60">Day</span> </h1>
+            <h1 class="h3" style="color: #fff;display: inline-block;width:1px;word-wrap: break-word;margin-left: 1050px;"><span class="o pl20">Happy</span> <span class="pl40">Republic </span><span class="g pl60">Day</span> </h1>
+            <!-- <h1 style="color: #fff;"><span class="">2</span>02<span class="">2</span></h1> -->
+    </div>
+    <script>
+
+        function start() {
+            setTimeout(
+                function () {
+                    myFunction('c1', "./orange.png");
+                    myFunction('c2', "./green.png")
+                    // myFunction('c3', "./w.png" )
+                }, 1000);
+
+            $("#mainC").fadeOut()
+
+        }
+        function myFunction(obj, ball) {
+            (function () {
+                var total = 500,
+                    blobs = new Array(total),
+                    myfps = 6,
+                    updateTime = 100 / myfps,
+                    mouse_pos = { x: 0, y: 0 },
+                    canvas = this.__canvas = new fabric.Canvas(obj, {
+                        renderOnAddRemove: false,
+                        selection: false
+                    }),
+                    maxx = canvas.width,
+                    maxy = canvas.height,
+                    msg, startTime, prevTime, ms, frames;
+
+                //   canvas.setBackgroundImage('./bkg.jpg');
+                fabric.Image.fromURL(ball, blobLoaded);
+
+                canvas.on('mouse:move', function (options) {
+                    // mouse_pos = canvas.getPointer(options.e);
+                });
+
+                function blobLoaded(img) {
+                    for (var i = 0; i < total; i++) {
+                        var img2 = new fabric.Image(img.getElement(), {
+                            left: Math.random() * maxx,
+                            top: Math.random() * maxy,
+                            width: 30,
+                            height: 30,
+                            selectable: false
+                        });
+                        img2.vx = 0;
+                        img2.vy = 0;
+                        canvas.add(img2);
+                        blobs[i] = img2;
+                    }
+
+                    // msg = new fabric.Text('FPS: 0/' + myfps, {
+                    //     fontFamily: 'Arial',
+                    //     fontSize: 12,
+                    //     fill: 'white',
+                    //     fontWeight: 'bold',
+                    //     left: 50,
+                    //     top: 35,
+                    //     selectable: false
+                    // });
+                    // canvas.add(msg);
+
+                    frames = 0;
+                    startTime = Date.now(), prevTime = startTime;
+                    animate();
+                }
+
+                function animate() {
+                    for (var i = 0; i < total; i++) {
+                        var blob = blobs[i];
+                        var dx = blob.left - mouse_pos.x;
+                        var dy = blob.top - mouse_pos.y;
+                        var vx = blob.vx;
+                        var vy = blob.vy;
+
+                        if (dx * dx + dy * dy <= 10000) {
+                            vx += dx * 0.01;
+                            vy += dy * 0.01;
+                        }
+                        vx *= 0.95;
+                        vy *= 0.95;
+
+                        vx += Math.random() - 0.5;
+                        vy += Math.random() - 0.5;
+
+                        var x = blob.left += vx;
+                        var y = blob.top += vy;
+
+                        if (x < 0 || x > maxx || y < 0 || y > maxy) {
+                            var r = Math.atan2(y - maxy / 2, x - maxx / 2);
+                            vx = -Math.cos(r);
+                            vy = -Math.sin(r);
+                        }
+
+                        blob.vx = vx;
+                        blob.vy = vy;
+                    }
+
+                    var time = Date.now();
+                    frames++;
+
+                    if (time > prevTime + 1000) {
+                        fps = Math.round((frames * 1000) / (time - prevTime));
+                        prevTime = time;
+                        frames = 0;
+
+                        // msg.set('text', "FPS: " + fps + "/" + myfps);
+                    }
+
+                    fabric.util.requestAnimFrame(animate, canvas.getElement());
+                    canvas.renderAll();
+                }
+            })();
+        }
+        start();
+        setTimeout(
+            function () {
+                // $(".image").hide( "scale", {percent: 200}, 2000 );
+                // $('.imageC').animate({transform: "scale(2)"});
+                   $("#mainC").fadeIn("slow","linear")
+                   setTimeout( function () { $(".h1").css("opacity","1")}, 2000)
+                   setTimeout( function () { $(".h2").css("opacity","1")}, 3000)
+                   setTimeout( function () { $(".h3").css("opacity","1")}, 4000)
+            }, 8000);
+    </script>
+</body>
+
+</html>
